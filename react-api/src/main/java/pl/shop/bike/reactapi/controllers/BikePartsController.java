@@ -1,0 +1,32 @@
+package pl.shop.bike.reactapi.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.shop.commons.clients.ReadServiceClient;
+
+import java.util.List;
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+
+@RestController
+@RequestMapping("/api/bike/parts")
+public class BikePartsController {
+
+    @Autowired
+    private ReadServiceClient readServiceClient;
+
+    @GetMapping
+    public List<?> getAllBikeParts(@RequestParam(required = false) String type) {
+        return readServiceClient.getAllBikeParts(type);
+    }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<?> getBikePartByName(@PathVariable String name){
+        return readServiceClient.getBikePartByName(name);
+    }
+
+    @GetMapping("/sort/name")
+    public ResponseEntity<?> sortPartsByName(@RequestParam String parameter){
+        return readServiceClient.sortPartsByName(parameter);
+    }
+}

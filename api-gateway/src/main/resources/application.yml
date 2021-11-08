@@ -1,0 +1,38 @@
+server:
+  port: 8765
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin Access-Control-Expose-Headers
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      metrics:
+        enabled: true
+      routes:
+        - id: READ-SERVICE
+          predicates:
+            - Path=/api/read/**
+          uri: lb://READ-SERVICE
+        - id: REACT-API
+          predicates:
+            - Path=/api/bikes/**,/api/accessories/**, /api/bike/parts/**, /api/workshop/**, /api/orders/**, /api/users/**,/api/react/**
+          uri: lb://REACT-API
+        - id: UPDATE-SERVICE
+          predicates:
+            - Path=/api/update/**
+          uri: lb://UPDATE-SERVICE
+      discovery:
+        locator:
+          enabled: false
+  application:
+    name: api-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
