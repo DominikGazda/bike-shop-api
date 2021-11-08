@@ -21,7 +21,7 @@ import java.util.List;
 public abstract class BaseBikeParts {
 
     private String name;
-    private Integer price;
+    private Double price;
     private String mark;
     @Enumerated(EnumType.STRING)
     private BikePartsType bikePartsType;

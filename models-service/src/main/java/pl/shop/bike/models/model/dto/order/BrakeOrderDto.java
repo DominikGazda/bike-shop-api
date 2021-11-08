@@ -1,22 +1,15 @@
 package pl.shop.bike.models.model.dto.order;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import pl.shop.bike.models.model.baseModel.BaseOrder;
 
 import java.util.Date;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class BrakeOrderDto {
+@EqualsAndHashCode(callSuper = false)
+public class BrakeOrderDto extends BaseOrder {
 
-    private String name;
-    private Integer price;
-    private String mark;
-    private String color;
-    private Integer itemAmount;
-    private Date orderDate;
 }

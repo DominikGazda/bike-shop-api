@@ -1,26 +1,21 @@
 package pl.shop.bike.models.model.dto.order;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import pl.shop.bike.models.model.baseModel.BaseOrder;
 import pl.shop.bike.models.model.enums.BikeType;
 import pl.shop.bike.models.model.enums.OrderStatus;
 
 import java.util.Date;
 
 @Data
-@Builder
-@NoArgsConstructor
+@SuperBuilder
 @AllArgsConstructor
-public class BikeOrderDto {
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class BikeOrderDto extends BaseOrder {
 
-    private String name;
-    private String mark;
-    private String color;
-    private BikeType bikeType;
-    private Integer itemAmount;
-    private Double price;
     private Date orderDate;
     private OrderStatus status;
+    private BikeType bikeType;
 }

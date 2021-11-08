@@ -23,11 +23,11 @@ public class OrderDaoService {
         orderEntities.forEach((order) -> {
             if (order.getBike() != null) {
                 BikeOrderDto bike = BikeOrderDto.builder()
+                        .bikeType(order.getBike().getBikeType())
                         .name(order.getBike().getName())
                         .mark(order.getBike().getMark())
                         .price(order.getBike().getPrice())
                         .color(order.getBike().getColor())
-                        .bikeType(order.getBike().getBikeType())
                         .itemAmount(order.getBike().getItemAmount())
                         .orderDate(order.getOrderDate())
                         .build();

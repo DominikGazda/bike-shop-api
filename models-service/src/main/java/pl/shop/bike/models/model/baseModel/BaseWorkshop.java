@@ -20,7 +20,7 @@ import java.util.List;
 public abstract class BaseWorkshop {
 
     private String name;
-    private Integer price;
+    private Double price;
     private String mark;
     private String description;
     private String productCode;

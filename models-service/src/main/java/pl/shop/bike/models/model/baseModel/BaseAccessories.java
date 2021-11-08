@@ -19,7 +19,7 @@ import javax.persistence.MappedSuperclass;
 public abstract class BaseAccessories {
 
     private String name;
-    private Integer price;
+    private Double price;
     private String mark;
     @Enumerated(EnumType.STRING)
     private AccessoriesType accessoriesType;
