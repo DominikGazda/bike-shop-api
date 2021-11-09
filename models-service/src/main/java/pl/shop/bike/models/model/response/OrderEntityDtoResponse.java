@@ -5,10 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.shop.bike.models.model.dto.order.*;
-import pl.shop.bike.models.model.enums.OrderStatus;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
