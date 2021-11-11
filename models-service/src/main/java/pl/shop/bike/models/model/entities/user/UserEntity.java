@@ -1,6 +1,7 @@
 package pl.shop.bike.models.model.entities.user;
 
 import lombok.*;
+import pl.shop.bike.models.model.entities.address.AddressEntity;
 import pl.shop.bike.models.model.security.User;
 
 import javax.persistence.*;
@@ -21,15 +22,9 @@ public class UserEntity {
     private String password;
     private String name;
     private String surname;
-    private String street;
-    private Integer houseNumber;
-    private Integer localNumber;
-    private String city;
-    private String email;
-    private String phone;
-    private String postalCode;
-    private String statute;
-    private String zipCode;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private AddressEntity address;
 
     @OneToOne(cascade = CascadeType.ALL)
     private User user;

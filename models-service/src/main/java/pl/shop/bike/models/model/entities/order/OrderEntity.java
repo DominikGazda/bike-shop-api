@@ -7,6 +7,7 @@ import pl.shop.bike.models.model.entities.accessories.BagsEntity;
 import pl.shop.bike.models.model.entities.accessories.BottlesEntity;
 import pl.shop.bike.models.model.entities.accessories.FendersEntity;
 import pl.shop.bike.models.model.entities.accessories.PumpEntity;
+import pl.shop.bike.models.model.entities.address.AddressEntity;
 import pl.shop.bike.models.model.entities.bikeParts.BrakeEntity;
 import pl.shop.bike.models.model.entities.bikeParts.DriveEntity;
 import pl.shop.bike.models.model.entities.bikeParts.FrameEntity;
@@ -100,5 +101,8 @@ public class OrderEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private AddressEntity address;
 
 }

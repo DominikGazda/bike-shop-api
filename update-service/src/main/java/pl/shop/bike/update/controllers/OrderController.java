@@ -12,6 +12,7 @@ import pl.shop.bike.models.model.entities.accessories.BagsEntity;
 import pl.shop.bike.models.model.entities.accessories.BottlesEntity;
 import pl.shop.bike.models.model.entities.accessories.FendersEntity;
 import pl.shop.bike.models.model.entities.accessories.PumpEntity;
+import pl.shop.bike.models.model.entities.address.AddressEntity;
 import pl.shop.bike.models.model.entities.bikeParts.BrakeEntity;
 import pl.shop.bike.models.model.entities.bikeParts.DriveEntity;
 import pl.shop.bike.models.model.entities.bikeParts.FrameEntity;
@@ -25,6 +26,7 @@ import pl.shop.bike.models.model.request.order.SaveOrderRequest;
 import pl.shop.bike.models.model.request.order.SaveOrderedItemsRequest;
 import pl.shop.bike.models.model.response.SaveOrderResponse;
 import pl.shop.bike.models.model.security.User;
+import pl.shop.commons.dao.addressDao.AddressRepository;
 import pl.shop.commons.dao.orderDAO.OrderRepository;
 import pl.shop.commons.dao.userDAO.UserEntityRepository;
 import pl.shop.commons.dao.userDAO.UserRepository;
@@ -32,6 +34,7 @@ import pl.shop.commons.dao.userDAO.UserRepository;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -41,26 +44,35 @@ public class OrderController {
     private UserEntityRepository userEntityRepository;
     private OrderRepository orderRepository;
     private EntityManager entityManager;
+    private AddressRepository addressRepository;
 
-    public OrderController(UserEntityRepository userEntityRepository, OrderRepository orderRepository, EntityManager entityManager) {
+    public OrderController(UserEntityRepository userEntityRepository, OrderRepository orderRepository, EntityManager entityManager, AddressRepository addressRepository) {
         this.userEntityRepository = userEntityRepository;
         this.orderRepository = orderRepository;
         this.entityManager = entityManager;
+        this.addressRepository = addressRepository;
     }
 
 
     @PostMapping
     @Transactional
-    public SaveOrderResponse saveOrder(@RequestBody SaveOrderRequest request) {
+        public SaveOrderResponse saveOrder(@RequestBody SaveOrderRequest request) {
         //TODO: Jak będzie security to jeżeli lista zwróci >1 userów to trzeba po np. adresie przefiltrować
         log.info("Save user process...");
         UserEntity user = userEntityRepository.findByUsername(request.getUsername());
+        System.out.println(user.getAddress().getId());
+        System.out.println(request.getAddress());
+        if(request.getAddress().getZipCode() == null){
+            Optional<AddressEntity> address = addressRepository.findById(user.getAddress().getId());
+            request.setAddress(address.get());
+        }
+        System.out.println(request.getAddress());
 //        if (!userEntityList.isEmpty()) {
 //            System.out.println("idk tbh");
 //            return null;
 //        } else {
-//            //zapisz usera jesli nie istnieje
-////            savedUser = userRepository.save(request.getUserDetails());
+            //zapisz usera jesli nie istnieje
+//            savedUser = userRepository.save(request.getUserDetails());
 //        }
 
         log.info("Save Order fields");
@@ -73,6 +85,7 @@ public class OrderController {
         SaveOrderedItemsRequest items = request.getSaveOrderedItemsRequest();
         for (BagsEntity bag : items.getBags()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(bag);
             tmpEntity.setAmount(bag.getItemAmount());
             tmpEntity.setBag(bag);
@@ -80,6 +93,7 @@ public class OrderController {
         }
         for (BottlesEntity bottle : items.getBottles()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(bottle);
             tmpEntity.setAmount(bottle.getItemAmount());
             tmpEntity.setBottle(bottle);
@@ -87,6 +101,7 @@ public class OrderController {
         }
         for (FendersEntity fender : items.getFenders()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(fender);
             tmpEntity.setAmount(fender.getItemAmount());
             tmpEntity.setFender(fender);
@@ -94,6 +109,7 @@ public class OrderController {
         }
         for (PumpEntity pump : items.getPumps()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(pump);
             tmpEntity.setAmount(pump.getItemAmount());
             tmpEntity.setPump(pump);
@@ -101,6 +117,7 @@ public class OrderController {
         }
         for (MaintenanceEntity maintenance : items.getMaintenances()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(maintenance);
             tmpEntity.setAmount(maintenance.getItemAmount());
             tmpEntity.setMaintenance(maintenance);
@@ -108,6 +125,7 @@ public class OrderController {
         }
         for (RacksEntity rack : items.getRacks()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(rack);
             tmpEntity.setAmount(rack.getItemAmount());
             tmpEntity.setRack(rack);
@@ -115,6 +133,7 @@ public class OrderController {
         }
         for (ToolsEntity tool : items.getTools()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(tool);
             tmpEntity.setAmount(tool.getItemAmount());
             tmpEntity.setTool(tool);
@@ -122,6 +141,7 @@ public class OrderController {
         }
         for (BrakeEntity brake : items.getBrakes()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(brake);
             tmpEntity.setAmount(brake.getItemAmount());
             tmpEntity.setBrake(brake);
@@ -129,6 +149,7 @@ public class OrderController {
         }
         for (DriveEntity drive : items.getDrives()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(drive);
             tmpEntity.setAmount(drive.getItemAmount());
             tmpEntity.setDrive(drive);
@@ -136,6 +157,7 @@ public class OrderController {
         }
         for (FrameEntity frame : items.getFrames()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(frame);
             tmpEntity.setAmount(frame.getItemAmount());
             tmpEntity.setFrame(frame);
@@ -143,6 +165,7 @@ public class OrderController {
         }
         for (BikeEntity bike : items.getBikes()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
+            tmpEntity.setAddress(request.getAddress());
             entityManager.merge(bike);
             tmpEntity.setAmount(bike.getItemAmount());
             tmpEntity.setBike(bike);

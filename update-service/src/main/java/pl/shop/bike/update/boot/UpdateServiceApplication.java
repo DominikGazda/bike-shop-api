@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages ={
         "pl.shop.bike.update",
-        "pl.shop.commons.dao"
+        "pl.shop.commons"
 })
 @EnableJpaRepositories(basePackages = "pl.shop.commons.dao")
 @EntityScan(basePackages = {

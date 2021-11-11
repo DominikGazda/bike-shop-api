@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.shop.bike.models.model.entities.address.AddressEntity;
 import pl.shop.bike.models.model.entities.user.UserEntity;
 import pl.shop.bike.models.model.enums.OrderStatus;
 
@@ -20,4 +21,5 @@ public class SaveOrderRequest {
     private OrderStatus status;
     private Date orderDate;
     private SaveOrderedItemsRequest saveOrderedItemsRequest;
+    private AddressEntity address;
 }

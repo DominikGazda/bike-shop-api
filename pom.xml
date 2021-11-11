@@ -29,6 +29,7 @@
         <module>read-dao-service</module>
         <module>update-service</module>
         <module>react-api</module>
+        <module>admin-service</module>
     </modules>
 
     <dependencies>

@@ -1,5 +1,6 @@
 package pl.shop.bike.reactapi.controllers;
 
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import pl.shop.bike.models.model.entities.user.UserEntity;
 import pl.shop.bike.models.model.security.User;
 import pl.shop.commons.clients.ReadServiceClient;
 import pl.shop.commons.clients.UpdateServiceClient;
+import pl.shop.commons.dao.addressDao.AddressRepository;
 
 @RestController
 @RequestMapping("/api/users")
@@ -31,16 +33,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
-    @GetMapping("/test")
-    public String test() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        if(principal instanceof String){
-            System.out.println((String) principal);
-        } else {
-            System.out.println("tragedia");
-        }
-        return       "getUserFromContext();";
-    }
+//    @GetMapping("/test")
+//    public String test() {
+//       return addressRepository.findById(4L).orElseThrow(NoClassDefFoundError::new).toString();
+//    }
 }
 
 
