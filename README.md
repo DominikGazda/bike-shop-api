@@ -44,7 +44,11 @@ https://github.com/DominikGazda/bike-shop-api
 * Make an appointment at a bicycle repair shop
 
 ## Microservices Architecture
+* User
 <img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/microservices-architecture.png" />
+
+* Admin
+<img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/admin-microservices.png" />
 
 ## Rest documentation
 ### React-Api (Swagger url: http://localhost:8111/swagger-ui/index.html)
