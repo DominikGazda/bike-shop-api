@@ -44,7 +44,7 @@ https://github.com/DominikGazda/bike-shop-api
 
 ## Rest documentation
 ### React-Api (Swagger url: http://localhost:8111/swagger-ui/index.html)
-<img src = "https://github.com/DominikGazda/bike-shop-api/blob/master/images/react-api.png" />
+<img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/react-api.png" />
 ### Admin-Service (Swagger url: http://localhost:7777/swagger-ui/index.html)
 <img src = "https://github.com/DominikGazda/bike-shop-api/blob/master/images/admin-service.png" />
 ### Read-Dao-Service (Swagger url: http://localhost:8089/swagger-ui/index.html)
