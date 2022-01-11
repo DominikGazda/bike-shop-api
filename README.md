@@ -5,6 +5,7 @@
 * [Technologies](#technologies)
 * [Setup](#setup)
 * [Features](#Features)
+* [Architecture](#Architecture)
 * [Rest documentation](#rest-documentation)
 
 ## General info
@@ -42,15 +43,21 @@ https://github.com/DominikGazda/bike-shop-api
 * Manage all accounts as administrator
 * Make an appointment at a bicycle repair shop
 
+## Architecture
+
+
 ## Rest documentation
 ### React-Api (Swagger url: http://localhost:8111/swagger-ui/index.html)
-<img src = "https://github.com/DominikGazda/bike-shop-api/blob/master/images/react-api.png" />
+<img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/react-api.png" />
+
 ### Admin-Service (Swagger url: http://localhost:7777/swagger-ui/index.html)
-<img src = "https://github.com/DominikGazda/bike-shop-api/blob/master/images/admin-service.png" />
+<img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/admin-service.png" />
+
 ### Read-Dao-Service (Swagger url: http://localhost:8089/swagger-ui/index.html)
-<img src = "https://github.com/DominikGazda/bike-shop-api/blob/master/images/read-dao-service.png" />
+<img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/read-dao-service.png" />
+
 ### Update-Service (Swagger url: http://localhost:8093/swagger-ui/index.html)
-<img src = "https://github.com/DominikGazda/bike-shop-api/blob/master/images/update-service.png" />
+<img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/update-service.png" />
 
 
 
