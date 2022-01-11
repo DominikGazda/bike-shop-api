@@ -5,7 +5,7 @@
 * [Technologies](#technologies)
 * [Setup](#setup)
 * [Features](#Features)
-* [Architecture](#Architecture)
+* [Microservices Architecture](#microservices-architecture)
 * [Rest documentation](#rest-documentation)
 
 ## General info
@@ -43,8 +43,8 @@ https://github.com/DominikGazda/bike-shop-api
 * Manage all accounts as administrator
 * Make an appointment at a bicycle repair shop
 
-## Architecture
-
+## Microservices Architecture
+<img src = "https://github.com/DominikGazda/bike-shop-api/blob/develop/images/microservices-architecture.png" />
 
 ## Rest documentation
 ### React-Api (Swagger url: http://localhost:8111/swagger-ui/index.html)
