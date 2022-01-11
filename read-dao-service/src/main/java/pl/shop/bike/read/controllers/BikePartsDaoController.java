@@ -7,14 +7,17 @@ import pl.shop.bike.models.model.entities.bikeParts.DriveEntity;
 import pl.shop.bike.models.model.entities.bikeParts.FrameEntity;
 import pl.shop.bike.models.model.enums.BikePartsType;
 import pl.shop.bike.models.model.request.bikesPartsFilter.BikesPartsFilterRequest;
+import pl.shop.bike.models.model.response.BikePartsNamesResponse;
 import pl.shop.commons.dao.bikePartsDAO.BrakeRepository;
 import pl.shop.commons.dao.bikePartsDAO.DriveRepository;
 import pl.shop.commons.dao.bikePartsDAO.FrameRepository;
+import pl.shop.commons.errors.exceptions.ItemNotFoundException;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pl.shop.commons.utils.FilterNamesList.*;
 
@@ -36,9 +39,17 @@ public class BikePartsDaoController {
     public List<?> getAllBikeParts(@RequestParam(name = "type", required = false) String type) {
         if (type == null) {
             List<List<?>> allPartsList = new ArrayList<>();
-            List<BrakeEntity> brakeList = brakeRepository.findAll();
-            List<DriveEntity> driveList = driveRepository.findAll();
-            List<FrameEntity> frameList = frameRepository.findAll();
+            List<BrakeEntity> brakeList = brakeRepository.findAll().stream()
+                    .filter(brake -> !brake.isDeleted())
+                    .collect(Collectors.toList());
+
+            List<DriveEntity> driveList = driveRepository.findAll().stream()
+                    .filter(drive -> !drive.isDeleted())
+                    .collect(Collectors.toList());
+
+            List<FrameEntity> frameList = frameRepository.findAll().stream()
+                    .filter(frame -> !frame.isDeleted())
+                    .collect(Collectors.toList());
 
             if (!brakeList.isEmpty()) {
                 allPartsList.add(brakeList);
@@ -55,18 +66,25 @@ public class BikePartsDaoController {
         BikePartsType enumType = BikePartsType.findBikePartsTypeByName(type);
         switch (enumType) {
             case BRAKE:
-                return brakeRepository.findAll();
+                return brakeRepository.findAll().stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList());
             case DRIVE:
-                return driveRepository.findAll();
+                return driveRepository.findAll().stream()
+                        .filter(drive -> !drive.isDeleted())
+                        .collect(Collectors.toList());
             case FRAME:
-                return frameRepository.findAll();
+                return frameRepository.findAll().stream()
+                        .filter(frame -> !frame.isDeleted())
+                        .collect(Collectors.toList());
             default:
-                throw new IllegalArgumentException("To jest bikeparts");
+                throw new ItemNotFoundException("Nie znaleziono takiego przedmiotu");
         }
     }
 
     @GetMapping("/{name}")
     public ResponseEntity<?> getBikePartByName(@PathVariable(name = "name") String name) {
+        System.out.println(name);
         BrakeEntity brakeEntity = brakeRepository.findByNameIgnoreCase(name);
         if (brakeEntity == null) {
             DriveEntity driveEntity = driveRepository.findByNameIgnoreCase(name);
@@ -75,7 +93,7 @@ public class BikePartsDaoController {
                 if (frameEntity != null) {
                     return ResponseEntity.ok(frameEntity);
                 } else {
-                    throw new IllegalArgumentException("Nie znaleziono obiektu w dao");
+                    throw new ItemNotFoundException("Nie znaleziono takiego przedmiotu");
                 }
             } else {
                 return ResponseEntity.ok(driveEntity);
@@ -86,106 +104,255 @@ public class BikePartsDaoController {
     }
 
     @PostMapping("/sort")
-    public ResponseEntity<?> sortBikesByParameter(@RequestBody BikesPartsFilterRequest bikesPartsFilterRequest) {
+    public List<Set<?>> sortBikesByParameter(@RequestBody BikesPartsFilterRequest request) {
+        List<Set<?>> parts = new ArrayList<>();
 
-        Set<BrakeEntity> filteredBrakes = new LinkedHashSet<>();
-        Set<DriveEntity> filteredDrive = new LinkedHashSet<>();
-        Set<FrameEntity> filteredFrame = new LinkedHashSet<>();
+        Set<BrakeEntity> filteredBrakes = new HashSet<>();
+        Set<DriveEntity> filteredDrive = new HashSet<>();
+        Set<FrameEntity> filteredFrame = new HashSet<>();
 
-        if (bikesPartsFilterRequest.getType().getBrake() || bikesPartsFilterRequest.getType().getDrive() ||
-                bikesPartsFilterRequest.getType().getFrame() || bikesPartsFilterRequest.getType().getTest1()) {
-            if (bikesPartsFilterRequest.getType().getBrake())
-                filteredBrakes.addAll(brakeRepository.findAll());
-            if (bikesPartsFilterRequest.getType().getFrame())
-                filteredFrame.addAll(frameRepository.findAll());
-            if (bikesPartsFilterRequest.getType().getDrive())
-                filteredDrive.addAll(driveRepository.findAll());
-        }
+        if (!request.getType().getBrake() && !request.getType().getFrame() && !request.getType().getDrive()) {
+            if (!request.getColor().getBlack() && !request.getColor().getWhite() &&
+                    !request.getColor().getBlue() && !request.getColor().getRed() &&
+                    !request.getColor().getGray() && !request.getColor().getNavy()) {
+                if (!request.getMark().getTrec() && !request.getMark().getMerida() && !request.getMark().getKands()) {
+                    if (request.getPrice().getHighPrice() == 0 && request.getPrice().getLowPrice() == 0) {
+                        filteredBrakes.addAll(brakeRepository.findAll().stream()
+                                .filter(brake -> !brake.isDeleted())
+                                .collect(Collectors.toList()));
 
-        if (bikesPartsFilterRequest.getMark().getKands() || bikesPartsFilterRequest.getMark().getMerida() ||
-                bikesPartsFilterRequest.getMark().getTrec() || bikesPartsFilterRequest.getMark().getTest2()) {
-            if (bikesPartsFilterRequest.getMark().getKands()) {
-                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(KANDS));
-                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(KANDS));
-                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(KANDS));
-            }
-            if (bikesPartsFilterRequest.getMark().getTrec()) {
-                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(TREC));
-                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(TREC));
-                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(TREC));
-            }
-            if (bikesPartsFilterRequest.getMark().getMerida()) {
-                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(MERIDA));
-                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(MERIDA));
-                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(MERIDA));
-            }
-            if (bikesPartsFilterRequest.getMark().getTest2()) {
-                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(TEST2));
-                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(TEST2));
-                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(TEST2));
+                        filteredDrive.addAll(driveRepository.findAll().stream()
+                                .filter(brake -> !brake.isDeleted())
+                                .collect(Collectors.toList()));
+
+                        filteredFrame.addAll(frameRepository.findAll().stream()
+                                .filter(brake -> !brake.isDeleted())
+                                .collect(Collectors.toList()));
+
+                        parts.add(filteredBrakes);
+                        parts.add(filteredFrame);
+                        parts.add(filteredDrive);
+
+                        return parts;
+                    }
+                }
             }
         }
 
-        if (bikesPartsFilterRequest.getColor().getBlack() || bikesPartsFilterRequest.getColor().getWhite() ||
-                bikesPartsFilterRequest.getColor().getBlue() || bikesPartsFilterRequest.getColor().getRed() ||
-                bikesPartsFilterRequest.getColor().getGray() || bikesPartsFilterRequest.getColor().getNavy()) {
-            if (bikesPartsFilterRequest.getColor().getBlack()) {
-                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(BLACK));
-                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(BLACK));
-                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(BLACK));
+
+        if (request.getType().getBrake() || request.getType().getDrive() || request.getType().getFrame()) {
+            if (request.getType().getBrake())
+                filteredBrakes.addAll(brakeRepository.findAll().stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+            if (request.getType().getFrame())
+                filteredFrame.addAll(frameRepository.findAll().stream()
+                        .filter(frame -> !frame.isDeleted())
+                        .collect(Collectors.toList()));
+
+            if (request.getType().getDrive())
+                filteredDrive.addAll(driveRepository.findAll().stream()
+                        .filter(drive -> !drive.isDeleted())
+                        .collect(Collectors.toList()));
+        }
+
+        if (request.getMark().getKands() || request.getMark().getMerida() || request.getMark().getTrec() || request.getMark().getSram() || request.getMark().getShimano()) {
+            if (request.getMark().getKands()) {
+                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(KANDS).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(KANDS).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(KANDS).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
             }
-            if (bikesPartsFilterRequest.getColor().getWhite()) {
-                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(WHITE));
-                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(WHITE));
-                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(WHITE));
+
+            if (request.getMark().getTrec()) {
+                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(TREC).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(TREC).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(TREC).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
             }
-            if (bikesPartsFilterRequest.getColor().getBlue()) {
-                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(BLUE));
-                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(BLUE));
-                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(BLUE));
+
+            if (request.getMark().getMerida()) {
+                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(MERIDA).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(MERIDA).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(MERIDA).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
             }
-            if (bikesPartsFilterRequest.getColor().getRed()) {
-                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(RED));
-                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(RED));
-                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(RED));
+
+            if (request.getMark().getShimano()) {
+                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(SHIMANO).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(SHIMANO).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(SHIMANO).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
             }
-            if (bikesPartsFilterRequest.getColor().getGray()) {
-                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(GRAY));
-                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(GRAY));
-                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(GRAY));
-            }
-            if (bikesPartsFilterRequest.getColor().getNavy()) {
-                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(NAVY));
-                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(NAVY));
-                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(NAVY));
+
+            if (request.getMark().getSram()) {
+                filteredBrakes.addAll(brakeRepository.findAllByMarkIgnoreCase(SRAM).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByMarkIgnoreCase(SRAM).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByMarkIgnoreCase(SRAM).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
             }
         }
 
-        if (bikesPartsFilterRequest.getPrice().getHighPrice() > 0 && bikesPartsFilterRequest.getPrice().getLowPrice() > 0) {
-            filteredBrakes.addAll(brakeRepository.findAllByPriceGreaterThanEqualAndPriceLessThanEqual(bikesPartsFilterRequest.getPrice().getLowPrice(), bikesPartsFilterRequest.getPrice().getHighPrice()));
-            filteredDrive.addAll(driveRepository.findAllByPriceGreaterThanEqualAndPriceLessThanEqual(bikesPartsFilterRequest.getPrice().getLowPrice(), bikesPartsFilterRequest.getPrice().getHighPrice()));
-            filteredFrame.addAll(frameRepository.findAllByPriceGreaterThanEqualAndPriceLessThanEqual(bikesPartsFilterRequest.getPrice().getLowPrice(), bikesPartsFilterRequest.getPrice().getHighPrice()));
+        if (request.getColor().getBlack() || request.getColor().getWhite() ||
+                request.getColor().getBlue() || request.getColor().getRed() ||
+                request.getColor().getGray() || request.getColor().getNavy()) {
+            if (request.getColor().getBlack()) {
+                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(BLACK).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(BLACK).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(BLACK).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+            }
+
+            if (request.getColor().getWhite()) {
+                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(WHITE).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(WHITE).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(WHITE).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+            }
+
+            if (request.getColor().getBlue()) {
+                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(BLUE).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(BLUE).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(BLUE).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+            }
+
+            if (request.getColor().getRed()) {
+                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(RED).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(RED).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(RED).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+            }
+
+            if (request.getColor().getGray()) {
+                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(GRAY).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(GRAY).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(GRAY).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+            }
+
+            if (request.getColor().getNavy()) {
+                filteredBrakes.addAll(brakeRepository.findAllByColorIgnoreCase(NAVY).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredDrive.addAll(driveRepository.findAllByColorIgnoreCase(NAVY).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+
+                filteredFrame.addAll(frameRepository.findAllByColorIgnoreCase(NAVY).stream()
+                        .filter(brake -> !brake.isDeleted())
+                        .collect(Collectors.toList()));
+            }
         }
 
-        List<Set<?>> filteredParts = new ArrayList<>();
+        if (request.getPrice().getHighPrice() > 0 && request.getPrice().getLowPrice() > 0) {
+            filteredBrakes.addAll(brakeRepository.findAllByPriceGreaterThanEqualAndPriceLessThanEqual(request.getPrice().getLowPrice(), request.getPrice().getHighPrice()).stream()
+                    .filter(brake -> !brake.isDeleted())
+                    .collect(Collectors.toList()));
 
-        if (!filteredBrakes.isEmpty())
-            filteredParts.add(filteredBrakes);
-        if (!filteredFrame.isEmpty())
-            filteredParts.add(filteredFrame);
-        if (!filteredDrive.isEmpty())
-            filteredParts.add(filteredDrive);
+            filteredDrive.addAll(driveRepository.findAllByPriceGreaterThanEqualAndPriceLessThanEqual(request.getPrice().getLowPrice(), request.getPrice().getHighPrice()).stream()
+                    .filter(brake -> !brake.isDeleted())
+                    .collect(Collectors.toList()));
 
-        return ResponseEntity.ok(filteredParts);
+            filteredFrame.addAll(frameRepository.findAllByPriceGreaterThanEqualAndPriceLessThanEqual(request.getPrice().getLowPrice(), request.getPrice().getHighPrice()).stream()
+                    .filter(brake -> !brake.isDeleted())
+                    .collect(Collectors.toList()));
+        }
+
+        parts.add(filteredBrakes);
+        parts.add(filteredDrive);
+        parts.add(filteredFrame);
+
+        return parts;
     }
 
     @GetMapping("/sort/name")
     public ResponseEntity<?> sortPartsByName(@RequestParam(name = "parameter") String parameter) {
         List<List<?>> filteredParts = new ArrayList<>();
 
-        List<BrakeEntity> brakes = brakeRepository.findAllByNameContainsIgnoreCase(parameter);
-        List<DriveEntity> drives = driveRepository.findAllByNameContainsIgnoreCase(parameter);
-        List<FrameEntity> frames = frameRepository.findAllByNameContainsIgnoreCase(parameter);
+        List<BrakeEntity> brakes = brakeRepository.findAllByNameContainsIgnoreCase(parameter).stream()
+                .filter(brake -> !brake.isDeleted())
+                .collect(Collectors.toList());
+
+        List<DriveEntity> drives = driveRepository.findAllByNameContainsIgnoreCase(parameter).stream()
+                .filter(brake -> !brake.isDeleted())
+                .collect(Collectors.toList());
+
+        List<FrameEntity> frames = frameRepository.findAllByNameContainsIgnoreCase(parameter).stream()
+                .filter(brake -> !brake.isDeleted())
+                .collect(Collectors.toList());
 
         if (!brakes.isEmpty()) {
             filteredParts.add(brakes);
@@ -196,7 +363,40 @@ public class BikePartsDaoController {
         if (!frames.isEmpty()) {
             filteredParts.add(frames);
         }
+
         return ResponseEntity.ok(filteredParts);
     }
 
+    @GetMapping("/names")
+    public BikePartsNamesResponse getBikePartsNames() {
+        List<BrakeEntity> brakes = brakeRepository.findAll().stream()
+                .filter(brake -> !brake.isDeleted())
+                .collect(Collectors.toList());
+
+        List<DriveEntity> drives = driveRepository.findAll().stream()
+                .filter(brake -> !brake.isDeleted())
+                .collect(Collectors.toList());
+
+        List<FrameEntity> frames = frameRepository.findAll().stream()
+                .filter(brake -> !brake.isDeleted())
+                .collect(Collectors.toList());
+
+        List<String> brakeNames = brakes.stream()
+                .map(brake -> brake.getName()).
+                        collect(Collectors.toList());
+
+        List<String> drivesNames = drives.stream()
+                .map(drive -> drive.getName())
+                .collect(Collectors.toList());
+
+        List<String> framesNames = frames.stream()
+                .map(frame -> frame.getName())
+                .collect(Collectors.toList());
+
+        return BikePartsNamesResponse.builder()
+                .brakeNames(brakeNames)
+                .driveNames(drivesNames)
+                .frameNames(framesNames)
+                .build();
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.shop.bike.models.model.entities.BikeEntity;
 import pl.shop.bike.models.model.request.bikesFilter.BikesFilterRequest;
 import pl.shop.commons.clients.ReadServiceClient;
+import pl.shop.commons.clients.UpdateServiceClient;
 
 import java.util.List;
 
@@ -15,7 +16,10 @@ public class BikesController {
     @Autowired
     private ReadServiceClient readServiceClient;
 
-    public BikesController(ReadServiceClient readServiceClient){
+    @Autowired
+    private UpdateServiceClient updateServiceClient;
+
+    public BikesController(ReadServiceClient readServiceClient) {
         this.readServiceClient = readServiceClient;
     }
 
@@ -25,22 +29,22 @@ public class BikesController {
     }
 
     @GetMapping("/{name}")
-    public BikeEntity findBikeByName(@PathVariable String name){
+    public BikeEntity findBikeByName(@PathVariable String name) {
         return readServiceClient.findBikeByName(name);
     }
 
     @GetMapping("/new")
-    public List<BikeEntity> findNewestBikes(){
+    public List<BikeEntity> findNewestBikes() {
         return readServiceClient.findNewestBikes();
     }
 
     @PostMapping("/sort")
-    public List<BikeEntity> sortBikesByParameter(@RequestBody BikesFilterRequest bikesFilterRequest){
+    public List<BikeEntity> sortBikesByParameter(@RequestBody BikesFilterRequest bikesFilterRequest) {
         return readServiceClient.sortBikesByParameter(bikesFilterRequest);
     }
 
     @GetMapping("/sort/name")
-    public List<BikeEntity> sortBikesByName(@RequestParam(name="parameter") String parameter){
+    public List<BikeEntity> sortBikesByName(@RequestParam(name = "parameter") String parameter) {
         return readServiceClient.sortBikesByName(parameter);
     }
 }
