@@ -22,6 +22,17 @@ public enum BikePartsType {
         } catch (Error e) {
             throw new IllegalArgumentException("Tutaj będzie message");
         }
+
         throw new IllegalArgumentException("Nie znaleziono elementu");
+    }
+
+    public static BikePartsType findBikeByType(String type) {
+        for (BikePartsType typ : BikePartsType.values()) {
+            if (typ.name.equalsIgnoreCase(type)) {
+                return typ;
+            }
+        }
+
+        throw new IllegalArgumentException("Nie znaleziono takiego typu części rowerowej");
     }
 }

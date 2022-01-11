@@ -11,15 +11,25 @@ public enum BrakeType {
 
     private String name;
 
-    BrakeType(String name){
+    BrakeType(String name) {
         this.name = name;
     }
 
-    public static BrakeType findBrakeType(String value){
-        try{
+    public static BrakeType findBrakeType(String value) {
+        try {
             return BrakeType.valueOf(value);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalArgumentException("Tu będzie error");
         }
+    }
+
+    public static BrakeType findBrakeByType(String type) {
+        for (BrakeType typ : BrakeType.values()) {
+            if (typ.name.equalsIgnoreCase(type)) {
+                return typ;
+            }
+        }
+
+        throw new IllegalArgumentException("Nie znaleziono takiej płci");
     }
 }

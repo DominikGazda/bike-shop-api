@@ -6,12 +6,13 @@ public enum ImageType {
     ACCESSORIES,
     WORKSHOP;
 
-    ImageType(){}
+    ImageType() {
+    }
 
-    public static ImageType findImage(String value){
-        try{
+    public static ImageType findImage(String value) {
+        try {
             return ImageType.valueOf(value);
-        } catch (Error e){
+        } catch (Error e) {
             throw new IllegalArgumentException("tutaj error message");
         }
     }

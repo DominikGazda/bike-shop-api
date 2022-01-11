@@ -1,7 +1,5 @@
 package pl.shop.bike.models.model.enums;
 
-import java.util.Locale;
-
 public enum ItemType {
 
     BIKES("bikes"),
@@ -11,7 +9,7 @@ public enum ItemType {
 
     private String type;
 
-    ItemType(String type){
+    ItemType(String type) {
         this.type = type;
     }
 

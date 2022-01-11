@@ -13,15 +13,17 @@ public enum BikeType {
 
     private String type;
 
-    BikeType(String type){
+    BikeType(String type) {
         this.type = type;
     }
 
-    public static BikeType findBikeByType(String type){
-        try{
-            return BikeType.valueOf(type);
-        } catch (Exception ex){
-            throw new IllegalArgumentException("tutaj trzeba dodac error");
+    public static BikeType findBikeByType(String types) {
+        for (BikeType typ : BikeType.values()) {
+            if (typ.type.equalsIgnoreCase(types)) {
+                return typ;
+            }
         }
+
+        throw new IllegalArgumentException("Nie znaleziono takiego typu roweru");
     }
 }
