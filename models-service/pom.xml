@@ -11,16 +11,23 @@
     <artifactId>models-service</artifactId>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-            <version>2.5.3</version>
-            <scope>test</scope>
+            <version>2.5.5</version>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>22.0.0</version>
+        </dependency>
+
+
+        <!--        <dependency>-->
 <!--            <groupId>pl.pkpik.elp</groupId>-->
 <!--            <artifactId>elp-test-data</artifactId>-->
 <!--            <version>0.0.1-SNAPSHOT</version>-->
