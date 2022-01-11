@@ -1,12 +1,9 @@
 package pl.shop.bike.update.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.criterion.Order;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pl.shop.bike.models.model.entities.BikeEntity;
 import pl.shop.bike.models.model.entities.accessories.BagsEntity;
 import pl.shop.bike.models.model.entities.accessories.BottlesEntity;
@@ -24,16 +21,15 @@ import pl.shop.bike.models.model.entities.workshop.ToolsEntity;
 import pl.shop.bike.models.model.enums.OrderStatus;
 import pl.shop.bike.models.model.request.order.SaveOrderRequest;
 import pl.shop.bike.models.model.request.order.SaveOrderedItemsRequest;
+import pl.shop.bike.models.model.response.DeleteOrderResponse;
 import pl.shop.bike.models.model.response.SaveOrderResponse;
-import pl.shop.bike.models.model.security.User;
 import pl.shop.commons.dao.addressDao.AddressRepository;
 import pl.shop.commons.dao.orderDAO.OrderRepository;
 import pl.shop.commons.dao.userDAO.UserEntityRepository;
-import pl.shop.commons.dao.userDAO.UserRepository;
+import pl.shop.commons.errors.exceptions.OrderNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -53,39 +49,72 @@ public class OrderController {
         this.addressRepository = addressRepository;
     }
 
+    @DeleteMapping()
+    ResponseEntity<DeleteOrderResponse> deleteOrder(@RequestParam(name = "orderId") Long orderId) {
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Nie znaleziono zamówienia o podanym id"));
+
+        orderRepository.delete(orderEntity);
+
+        DeleteOrderResponse response = DeleteOrderResponse.builder()
+                .id(orderEntity.getId())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @PostMapping("/status")
+    ResponseEntity changeOrderStatus(@RequestParam(name = "parameter") String parameter,
+                                     @RequestParam(name = "orderId") Integer orderId) {
+        OrderEntity orderEntity = orderRepository.findById(Long.valueOf(orderId))
+                .orElseThrow(IllegalArgumentException::new);
+
+        switch (parameter) {
+            case "Nowe":
+                orderEntity.setStatus(OrderStatus.NEW);
+                orderRepository.save(orderEntity);
+                break;
+            case "Realizowane":
+                orderEntity.setStatus(OrderStatus.IN_PROGRESS);
+                orderRepository.save(orderEntity);
+                break;
+            case "Zrealizowane":
+                orderEntity.setStatus(OrderStatus.COMPLETE);
+                orderRepository.save(orderEntity);
+                break;
+            default:
+                throw new IllegalArgumentException("Podany parametr jest nieprawidłowy");
+        }
+
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping
     @Transactional
-        public SaveOrderResponse saveOrder(@RequestBody SaveOrderRequest request) {
-        //TODO: Jak będzie security to jeżeli lista zwróci >1 userów to trzeba po np. adresie przefiltrować
+    public SaveOrderResponse saveOrder(@RequestBody SaveOrderRequest request) {
         log.info("Save user process...");
         UserEntity user = userEntityRepository.findByUsername(request.getUsername());
-        System.out.println(user.getAddress().getId());
-        System.out.println(request.getAddress());
-        if(request.getAddress().getZipCode() == null){
+
+        if (request.getAddress().getZipCode() == null) {
             Optional<AddressEntity> address = addressRepository.findById(user.getAddress().getId());
             request.setAddress(address.get());
         }
-        System.out.println(request.getAddress());
-//        if (!userEntityList.isEmpty()) {
-//            System.out.println("idk tbh");
-//            return null;
-//        } else {
-            //zapisz usera jesli nie istnieje
-//            savedUser = userRepository.save(request.getUserDetails());
-//        }
 
         log.info("Save Order fields");
         OrderEntity orderEntity = new OrderEntity();
+
         orderEntity.setStatus(OrderStatus.NEW);
         orderEntity.setOrderDate(request.getOrderDate());
         orderEntity.setUser(user);
 
         log.info("Save order list -> iterate");
         SaveOrderedItemsRequest items = request.getSaveOrderedItemsRequest();
+
         for (BagsEntity bag : items.getBags()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(bag);
             tmpEntity.setAmount(bag.getItemAmount());
             tmpEntity.setBag(bag);
@@ -94,6 +123,7 @@ public class OrderController {
         for (BottlesEntity bottle : items.getBottles()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(bottle);
             tmpEntity.setAmount(bottle.getItemAmount());
             tmpEntity.setBottle(bottle);
@@ -102,6 +132,7 @@ public class OrderController {
         for (FendersEntity fender : items.getFenders()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(fender);
             tmpEntity.setAmount(fender.getItemAmount());
             tmpEntity.setFender(fender);
@@ -110,6 +141,7 @@ public class OrderController {
         for (PumpEntity pump : items.getPumps()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(pump);
             tmpEntity.setAmount(pump.getItemAmount());
             tmpEntity.setPump(pump);
@@ -118,6 +150,7 @@ public class OrderController {
         for (MaintenanceEntity maintenance : items.getMaintenances()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(maintenance);
             tmpEntity.setAmount(maintenance.getItemAmount());
             tmpEntity.setMaintenance(maintenance);
@@ -126,6 +159,7 @@ public class OrderController {
         for (RacksEntity rack : items.getRacks()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(rack);
             tmpEntity.setAmount(rack.getItemAmount());
             tmpEntity.setRack(rack);
@@ -134,6 +168,7 @@ public class OrderController {
         for (ToolsEntity tool : items.getTools()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(tool);
             tmpEntity.setAmount(tool.getItemAmount());
             tmpEntity.setTool(tool);
@@ -142,6 +177,7 @@ public class OrderController {
         for (BrakeEntity brake : items.getBrakes()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(brake);
             tmpEntity.setAmount(brake.getItemAmount());
             tmpEntity.setBrake(brake);
@@ -150,6 +186,7 @@ public class OrderController {
         for (DriveEntity drive : items.getDrives()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(drive);
             tmpEntity.setAmount(drive.getItemAmount());
             tmpEntity.setDrive(drive);
@@ -158,6 +195,7 @@ public class OrderController {
         for (FrameEntity frame : items.getFrames()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(frame);
             tmpEntity.setAmount(frame.getItemAmount());
             tmpEntity.setFrame(frame);
@@ -166,6 +204,7 @@ public class OrderController {
         for (BikeEntity bike : items.getBikes()) {
             OrderEntity tmpEntity = buildOrderEntity(orderEntity);
             tmpEntity.setAddress(request.getAddress());
+
             entityManager.merge(bike);
             tmpEntity.setAmount(bike.getItemAmount());
             tmpEntity.setBike(bike);
@@ -186,6 +225,4 @@ public class OrderController {
                 .build();
 
     }
-
-
 }

@@ -4,10 +4,15 @@ public class FilterNamesList {
 
     public static final String KANDS = "kands";
     public static final String MERIDA = "merida";
-    public static final String CROSS = "cross";
+    public static final String CROSS = "kross";
     public static final String BMX = "bmx";
     public static final String TREC = "trec";
     public static final String TEST2 = "test2";
+    public static final String SHIMANO = "shimano";
+    public static final String SRAM = "sram";
+    public static final String EYEN = "eyen";
+    public static final String SKS = "sks";
+    public static final String CANNONDALE = "cannondale";
 
     public static final String BLACK = "czarny";
     public static final String WHITE = "biały";

@@ -1,6 +1,5 @@
 package pl.shop.bike.models.model.dto.order;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

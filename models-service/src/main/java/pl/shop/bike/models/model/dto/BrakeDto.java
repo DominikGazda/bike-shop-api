@@ -10,7 +10,8 @@ import pl.shop.bike.models.model.enums.BrakeType;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BrakeDto  {
+public class BrakeDto {
+
     private BrakeType brakeType;
     private String name;
 }

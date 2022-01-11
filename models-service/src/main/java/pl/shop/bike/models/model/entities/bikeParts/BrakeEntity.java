@@ -6,7 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import pl.shop.bike.models.model.baseModel.BaseBikeParts;
+import pl.shop.bike.models.model.entities.BikeEntity;
 import pl.shop.bike.models.model.entities.ImageEntity;
+import pl.shop.bike.models.model.enums.BrakeType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,9 +22,18 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class BrakeEntity extends BaseBikeParts {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long cableLength;
+
+    @Enumerated(EnumType.STRING)
+    private BrakeType brakeType;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private BikeEntity bike;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "brake_id")

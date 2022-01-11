@@ -1,11 +1,10 @@
 package pl.shop.bike.models.model.dto.order;
 
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import pl.shop.bike.models.model.baseModel.BaseOrder;
-import pl.shop.bike.models.model.enums.OrderStatus;
-
-import java.util.Date;
 
 @Data
 @SuperBuilder
@@ -13,4 +12,5 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 public class BagOrderDto extends BaseOrder {
 
+    private Long orderId;
 }

@@ -5,9 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.shop.bike.models.model.entities.address.AddressEntity;
-import pl.shop.bike.models.model.entities.user.UserEntity;
 import pl.shop.bike.models.model.enums.OrderStatus;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -16,10 +17,16 @@ import java.util.Date;
 @AllArgsConstructor
 public class SaveOrderRequest {
 
-    //    private User user  TODO: Użytkownik trzeba zrobic logike podaneDane / zalogowany juz ale to na froncie
+    @NotNull
+    @NotEmpty
     private String username;
+
+    @NotNull
     private OrderStatus status;
+
+    @NotNull
     private Date orderDate;
+
     private SaveOrderedItemsRequest saveOrderedItemsRequest;
     private AddressEntity address;
 }

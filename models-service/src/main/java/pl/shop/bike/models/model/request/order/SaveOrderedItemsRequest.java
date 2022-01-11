@@ -23,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveOrderedItemsRequest {
+
     private List<BikeEntity> bikes;
     private List<BagsEntity> bags;
     private List<BottlesEntity> bottles;

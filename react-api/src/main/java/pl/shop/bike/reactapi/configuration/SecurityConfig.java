@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.shop.bike.models.model.security.Role;
 import pl.shop.bike.reactapi.configuration.security.jwt.JwtConfig;
 import pl.shop.bike.reactapi.configuration.security.jwt.JwtTokenVerifier;
 import pl.shop.bike.reactapi.configuration.security.jwt.JwtUsernameAndPasswordAuthFilter;
@@ -23,6 +22,7 @@ import javax.crypto.SecretKey;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final SecretKey secretKey;
@@ -37,7 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http
                 .csrf().disable()
                 .headers().frameOptions().disable()
@@ -48,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(getJwtUsernameAndPasswordAuthFilter())
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-//                .antMatchers("/*", "index", "/css/*", "/js/*").permitAll()
+
                 .antMatchers("/api/bikes").permitAll()
                 .antMatchers("/api/bikes/new").permitAll()
                 .antMatchers("/api/bikes/{name}").permitAll()
@@ -62,14 +61,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/api/accessories").permitAll()
                 .antMatchers("/api/accessories/{name}").permitAll()
+                .antMatchers("/api/accessories/sort/name").permitAll()
 
                 .antMatchers("/api/workshop").permitAll()
                 .antMatchers("/api/workshop/{name}").permitAll()
-
+                .antMatchers("/api/workshop/sort/name").permitAll()
                 .antMatchers("/api/users").permitAll()
+
                 .anyRequest()
                 .authenticated();
-//                .permitAll();
     }
 
     @Override
@@ -81,8 +81,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public JwtUsernameAndPasswordAuthFilter getJwtUsernameAndPasswordAuthFilter() throws Exception {
         final JwtUsernameAndPasswordAuthFilter filter = new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtConfig, secretKey);
         filter.setFilterProcessesUrl("/api/react/user/login");
-        System.out.println(filter.getUsernameParameter());
-        System.out.println(filter.getPasswordParameter());
         return filter;
     }
 

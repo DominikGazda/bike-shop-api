@@ -1,7 +1,10 @@
 package pl.shop.bike.read.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pl.shop.bike.models.model.security.User;
 import pl.shop.commons.dao.userDAO.UserRepository;
 
@@ -16,9 +19,4 @@ public class FetchUserController {
     public User getUserByUsername(@PathVariable("username") String username) {
         return userRepository.getUserByUsername(username);
     }
-
-//    @PostMapping("/save")
-//    public void saveUser(@RequestBody User user) {
-//        userRepository.save(user);
-//    }
 }

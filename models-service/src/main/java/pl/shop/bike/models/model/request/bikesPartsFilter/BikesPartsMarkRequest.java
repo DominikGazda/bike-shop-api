@@ -14,5 +14,6 @@ public class BikesPartsMarkRequest {
     private Boolean kands;
     private Boolean merida;
     private Boolean trec;
-    private Boolean test2;
+    private Boolean shimano;
+    private Boolean sram;
 }

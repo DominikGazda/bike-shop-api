@@ -68,7 +68,6 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .compact();
 
         response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
-        //todo: naprawić odczytanie w reacie z headera
         response.getWriter().write(token);
         response.getWriter().flush();
     }

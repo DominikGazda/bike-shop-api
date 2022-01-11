@@ -16,7 +16,6 @@ public class OrderDto {
     private OrderStatus status = OrderStatus.NEW;
     private Date orderDate;
     private Integer amount;
-
     private BikeOrderDto bike;
     private BagOrderDto bag;
     private BottleOrderDto bottle;

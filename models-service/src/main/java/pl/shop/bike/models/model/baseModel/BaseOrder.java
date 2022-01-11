@@ -21,4 +21,5 @@ public abstract class BaseOrder {
     private Double price;
     private Date orderDate;
     private OrderStatus status;
+    private Long orderId;
 }

@@ -13,6 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveOrderResponse {
+
     private OrderStatus orderStatus;
     private Date orderDate;
 }

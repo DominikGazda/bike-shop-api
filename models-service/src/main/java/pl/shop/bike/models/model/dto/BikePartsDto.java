@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BikePartsDto {
+
     private BrakeDto brakeDto;
     private DriveDto driveDto;
     private FrameDto frameDto;
-
 }

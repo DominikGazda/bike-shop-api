@@ -22,10 +22,13 @@ public class UserEntity {
     private String password;
     private String name;
     private String surname;
+    private boolean isBlocked = false;
+    private boolean isDeleted = false;
 
     @OneToOne(cascade = CascadeType.ALL)
     private AddressEntity address;
 
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
+
 }

@@ -30,7 +30,11 @@ public class PumpEntity extends BaseAccessories {
     private Double maxPressure;
     private boolean manometer;
     private boolean isCatridge;
+
+    @Enumerated(value = EnumType.STRING)
     private PumpType pumpType;
+
+    @Enumerated(value = EnumType.STRING)
     private ValveType valveType;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

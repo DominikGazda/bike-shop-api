@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.shop.bike.models.model.dto.BikePartsDto;
 import pl.shop.bike.models.model.enums.BikeType;
 
 @Data
@@ -14,7 +13,6 @@ import pl.shop.bike.models.model.enums.BikeType;
 public class BikeDto {
 
     private Long id;
-
     private String name;
     private String description;
     private Double price;

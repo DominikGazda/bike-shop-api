@@ -27,5 +27,4 @@ public interface BikesRepository extends JpaRepository<BikeEntity, Long> {
 
     @Query("SELECT b FROM BikeEntity  b JOIN b.frame bf where bf.frameSize = ?1")
     List<BikeEntity> findAllBikesByFrameSize(Long frameSize);
-
 }

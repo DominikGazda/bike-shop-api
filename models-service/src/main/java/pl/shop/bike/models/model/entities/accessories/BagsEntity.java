@@ -1,6 +1,9 @@
 package pl.shop.bike.models.model.entities.accessories;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import pl.shop.bike.models.model.baseModel.BaseAccessories;
 import pl.shop.bike.models.model.entities.ImageEntity;
@@ -17,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class BagsEntity extends BaseAccessories {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
